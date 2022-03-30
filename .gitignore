@@ -12,8 +12,6 @@ api/staticfiles/*
 api/media/*
 backups/*
 api/logs/*
-!api/logs/.gitkeep
-!backups/.gitkeep
 api/celerybeat*
 
 containers/data

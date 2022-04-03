@@ -115,6 +115,7 @@ LOCAL_APPS = (
     "apps.users_auth.apps.UsersAuthConfig",
     "apps.uploads.apps.UploadsConfig",
     "apps.otp_auth.apps.OtpConfig",
+    "apps.staff.apps.StaffConfig",
     
 )
 
@@ -219,8 +220,9 @@ REST_FRAMEWORK = {
         "apps.users_auth.authentication.CustomJWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "apps.otp_auth.permissions.IsOtpVerified",
-        "apps.users.permissions.IsAdminSuperUser",
+        'rest_framework.permissions.IsAuthenticated',
+        # "apps.otp_auth.permissions.IsOtpVerified",
+        # "apps.users.permissions.IsAdminSuperUser",
     ),
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',  # LimitOffsetPagination
     "DEFAULT_PAGINATION_CLASS": "apps.core.pagination.StandardResultsSetPagination",  # LimitOffsetPagination
@@ -299,8 +301,10 @@ REDIS_CONN_URL = env.str("REDIS_CONN_URL", default="redis://localhost:6379")
 # SOCKET_IO_EMITTER_KEY = env.str("SOCKET_IO_EMITTER_KEY", default="SOCKET_IO_EMITTER_KEY")
 # BROADCAST_CHANNEL = env.str("BROADCAST_CHANNEL", "BROADCAST_CHANNEL")
 
+FAKE_EMAIL_FORMAT = env.str("FAKE_EMAIL_FORMAT", default="mailfake@goldfish.com")
+
 # Simple JWT
-EXPIRED_TOKEN_MINUTES = env.int("EXPIRED_TOKEN_MINUTES", default=60)
+EXPIRED_TOKEN_MINUTES = env.int("EXPIRED_TOKEN_MINUTES", default=200)
 EXPIRED_REFRESH_DAYS = env.int("EXPIRED_REFRESH_DAYS", default=30)
 
 JWT_PUBLIC_KEY_PATH = env.str("JWT_PUBLIC_KEY_PATH", default="jwt_api_key.pub")
@@ -331,3 +335,28 @@ DEFAULT_ERROR_MESSAGE = _("An error has occurred")
 USE_REDIS = os.environ.get("USE_REDIS", default="yes")
 
 CELERY_ACCEPT_CONTENT = ["json", "pickle"]
+
+# Registration
+SITE_ID = 1
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD_EMAIL = "email"
+ACCOUNT_AUTHENTICATION_METHOD_USERNAME = "username"
+ACCOUNT_EMAIL_VERIFICATION_MANDATORY = "mandatory"
+
+# Mailer
+SENDGRID_API_KEY = env("SENDGRID_API_KEY", default="")
+ACCOUNT_EMAIL_VERIFICATION = env("ACCOUNT_EMAIL_VERIFICATION", default="none")
+EMAIL_BACKEND = env(
+    "DJANGO_EMAIL_BACKEND",
+    default="django.core.mail.backends.smtp.EmailBackend",
+)
+EMAIL_HOST = env("EMAIL_HOST", default="smtp.gmail.com")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", default="")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+DEFAULT_FROM_EMAIL = env("DJANGO_DEFAULT_FROM_EMAIL", default="")
+ACCOUNT_EMAIL_SUBJECT_PREFIX = env("ACCOUNT_EMAIL_SUBJECT_PREFIX", default="")
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = env.int("EMAIL_CONFIRMATION_EXPIRE_DAYS", default=3)

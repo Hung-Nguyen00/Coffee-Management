@@ -5,5 +5,6 @@ urlpatterns = [
     path("", include("apps.users_auth.api.urls")),
     path("social-auth/", include("apps.social_auth.api.urls")),
     path("uploads/", include("apps.uploads.api.urls")),
-    path("otp/", include("apps.otp_auth.api.urls"))
+    path("otp/", include("apps.otp_auth.api.urls")),
+    path("", include("apps.staff.api.urls")),
 ]

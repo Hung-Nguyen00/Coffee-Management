@@ -116,6 +116,7 @@ LOCAL_APPS = (
     "apps.uploads.apps.UploadsConfig",
     "apps.otp_auth.apps.OtpConfig",
     "apps.staff.apps.StaffConfig",
+    "apps.notification.apps.NotificationConfig"
     
 )
 

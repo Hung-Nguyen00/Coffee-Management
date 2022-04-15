@@ -36,10 +36,11 @@ class Schedule(TimeStampedModel, SoftDeletableModel):
 
 
 class ScheduleStaff(TimeStampedModel, SoftDeletableModel):
-    staff = models.ForeignKey(Staff, null=True, blank=True, on_delete=models.SET_NULL)
-    schedule = models.ForeignKey(Schedule, null=True, blank=True, on_delete=models.SET_NULL)
+    staff = models.ForeignKey(Staff, null=True, blank=True, on_delete=models.CASCADE)
+    schedule = models.ForeignKey(Schedule, null=True, blank=True, on_delete=models.CASCADE)
     sessions = ArrayField(models.CharField(max_length=10, null=True, blank=True, choices=SessionName.choices()))
     total_hours_of_a_day = models.PositiveSmallIntegerField(null=True, blank=True, default=8)
+    total_hours_off_a_day = models.PositiveSmallIntegerField(null=True, blank=True, default=0)
     
     def __str__(self):
         return str(self.staff)
@@ -51,12 +52,23 @@ class ScheduleStaff(TimeStampedModel, SoftDeletableModel):
         return None
     
     def save(self, *args, **kwargs):
-        self.total_hours_of_a_day = 0
+        self.total_hours_of_a_day = 0 - self.total_hours_off_a_day
         for sessions in self.sessions:
             if sessions == SessionName.MOR:
                 self.total_hours_of_a_day += TOTAL_HOURS_OF_MORNING
             if sessions == SessionName.AFF:
                 self.total_hours_of_a_day += TOTAL_HOURS_OF_AFTERNOON
             if sessions == SessionName.EVE:
-                self.total_hours_of_a_day += TOTAL_HOURS_OF_EVENING        
+                self.total_hours_of_a_day += TOTAL_HOURS_OF_EVENING
+                
         super(ScheduleStaff, self).save(*args, **kwargs) 
+        
+
+class IncomeHistory(TimeStampedModel, SoftDeletableModel):
+    schedule_staff = models.ForeignKey(ScheduleStaff, null=True, blank=True, on_delete=models.SET_NULL)
+    is_payment = models.BooleanField(default=False)
+    date_payment = models.DateField(null=True, blank=True)
+    note = models.TextField(blank=True, null=True)
+    
+    def __str__(self):
+        return self.date_payment

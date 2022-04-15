@@ -4,7 +4,7 @@ from apps.staff.api.serializers import (
 )
 from apps.staff.models import Staff, Position, ScheduleStaff
 import django_filters.rest_framework as django_filter
-
+from rest_framework.response import Response
 
 
 class StaffView(viewsets.ModelViewSet):
@@ -31,3 +31,9 @@ class ScheduleStaffView(viewsets.ModelViewSet):
 class ScheduleStaffUpdateView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ScheduleStaffUpdateSerializer
     queryset = ScheduleStaff.objects.all()
+    
+    def delete(self, request, *args, **kwargs):
+        try:
+            return self.destroy(request, *args, **kwargs)
+        except Exception as e:
+            return Response({"message": f"The schedule staff does not exist."}, status=500)

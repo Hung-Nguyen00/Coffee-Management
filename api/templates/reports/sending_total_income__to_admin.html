@@ -1,0 +1,16 @@
+<html lang="en">
+<head>
+</head>
+<body>
+    <p>Hi {{assignee_first_name }},</p>
+    <p>
+        You got this task because you are PM in the [Intranet] app.
+        <br> Please check and update status of these projects:
+        <br> {% for staff in staffs %}
+        <li>{{ staff.first_name }}, {{ staff.last_name }}, Income: {{ staff.income}}
+        </li>
+        {% endfor %}
+    </p>
+    <p>Thanks,</p>
+</body>
+</html>

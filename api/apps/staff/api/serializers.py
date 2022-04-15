@@ -2,7 +2,6 @@ from turtle import position
 from rest_framework import serializers
 from apps.staff.models import Staff, Position, ScheduleStaff, Schedule
 from apps.staff.enums import SessionName
-from datetime import datetime
 from apps.staff.exceptions import ScheduleStaffExistException, SessionDoesNotExistException
 import calendar
 
@@ -43,10 +42,11 @@ class ScheduleSerializer(serializers.ModelSerializer):
 
 class ScheduleStaffUpdateSerializer(serializers.ModelSerializer):
     sessions = serializers.ListField(child=serializers.CharField(max_length=10), required=True)
+    total_hours_off_a_day = serializers.IntegerField(min_value=0, max_value=24, required=False)
             
     class Meta:
         model = ScheduleStaff
-        fields = ("id", "staff", "schedule", "total_hours_of_a_day", "sessions")
+        fields = ("id", "staff", "schedule", "total_hours_of_a_day", "sessions", "total_hours_off_a_day")
 
 
 
@@ -61,7 +61,7 @@ class ScheduleStaffSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = ScheduleStaff
-        fields = ("id", "staff", "schedule", "total_income_of_a_day",
+        fields = ("id", "staff", "schedule", "total_income_of_a_day", "total_hours_off_a_day",
                   "total_hours_of_a_day", "date_of_week", "sessions", "staff_id")
     
     @classmethod
@@ -75,14 +75,6 @@ class ScheduleStaffSerializer(serializers.ModelSerializer):
                 raise SessionDoesNotExistException()
         return sessions
     
-    def update(self, instance, validated_data):
-        date = validated_data.pop("date_of_week")
-        day_of_date = calendar.day_name[date.weekday()]
-        schedule, created = Schedule.objects.get_or_create(date_of_week=date, defaults={"day_of_week": day_of_date})
-        validated_data["schedule_id"] = schedule.id
-        schedule_staff = super().update(instance, validated_data)
-        return schedule_staff    
-        
     def create(self, validated_data):
         date = validated_data.pop("date_of_week")
         day_of_date = calendar.day_name[date.weekday()]

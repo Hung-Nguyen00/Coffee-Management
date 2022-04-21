@@ -7,6 +7,8 @@ from apps.core.celery import app
 from apps.staff.services.sending_email import SendingEmailStaffService
 
 
+result = SendingEmailStaffService(datetime.today())
+
 @app.on_after_finalize.connect
 def setup_periodic_tasks(sender, **kwargs):
     # Execute every weekdays at 1:00 AM
@@ -16,4 +18,4 @@ def setup_periodic_tasks(sender, **kwargs):
 @app.task()   
 def sending_email_income_employee():
     """ Sending Imcome of staff to admin"""
-    SendingEmailStaffService.sending_email_to_report_schedule_staff_income_everyweek()
+    result.sending_email_to_report_schedule_staff_income_everyweek()

@@ -1,8 +1,8 @@
 from rest_framework import viewsets, filters, generics
 from apps.staff.api.serializers import (
-    StaffSerializer, PositionSerializer, ScheduleStaffSerializer, ScheduleStaffUpdateSerializer
+    StaffSerializer, PositionSerializer, ScheduleStaffSerializer, ScheduleStaffUpdateSerializer, IncomeHistorySerializer
 )
-from apps.staff.models import Staff, Position, ScheduleStaff
+from apps.staff.models import Staff, Position, ScheduleStaff, IncomeHistory
 import django_filters.rest_framework as django_filter
 from rest_framework.response import Response
 
@@ -37,3 +37,15 @@ class ScheduleStaffUpdateView(generics.RetrieveUpdateDestroyAPIView):
             return self.destroy(request, *args, **kwargs)
         except Exception as e:
             return Response({"message": f"The schedule staff does not exist."}, status=500)
+        
+
+class IncomeHistoryListView(generics.ListAPIView):
+    serializer_class = IncomeHistorySerializer
+    queryset = IncomeHistory.objects.all()
+
+
+class IncomeHistoryRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+    serializer_class = IncomeHistorySerializer
+    queryset = IncomeHistory.objects.all()
+    http_method_names = ["patch", "get"]
+    

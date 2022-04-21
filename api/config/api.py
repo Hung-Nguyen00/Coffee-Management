@@ -7,4 +7,5 @@ urlpatterns = [
     path("uploads/", include("apps.uploads.api.urls")),
     path("otp/", include("apps.otp_auth.api.urls")),
     path("", include("apps.staff.api.urls")),
+    path("", include("apps.equipments.api.urls")),
 ]

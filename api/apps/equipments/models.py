@@ -44,7 +44,6 @@ class Material(TimeStampedModel, SoftDeletableModel):
     amount = models.FloatField(default=0.0, null=True, blank=True)
     unit   = models.CharField(max_length=50, null=True, blank=True)
     status = models.CharField(max_length=10, null=True, blank=True, choices=MaterialStatus.choices())
-    buying_price = models.DecimalField(default=0, null=True, decimal_places=0, max_digits=11)
     
     class Meta:
         indexes = [
@@ -68,9 +67,9 @@ class Bill(TimeStampedModel, SoftDeletableModel):
         ordering = ('-date_input',)
     
     @property
-    def total_money(self):
-        if self.billdetail_set.exists():
-            return sum(detail.total_money for detail in self.billdetail_set.all())
+    def total_money_bill(self):
+        if self.bill_details.exists():
+            return sum(detail.total_money for detail in self.bill_details.all())
         return 0
     
         

@@ -16,13 +16,12 @@ class EquipmentSerializer(serializers.ModelSerializer):
         
 class MaterialSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=50, required=True)
-    buying_price = serializers.DecimalField(max_digits=11, decimal_places=0)
     unit = serializers.CharField(max_length=50, required=True)
     amount = serializers.FloatField(required=True)
     
     class Meta:
         model = Material
-        fields = ("id", "name", "amount", "unit", "buying_price", "status")
+        fields = ("id", "name", "amount", "unit", "status")
         
 
 class SupplierSerializer(serializers.ModelSerializer):
@@ -62,10 +61,15 @@ class BillSerializer(serializers.ModelSerializer):
         required=True, source="supplier", queryset=Supplier.objects.all().values_list("id", flat=True), write_only=True)
     supplier     = SupplierSerializer(read_only=True)
     bill_details   = ListBillDetailSerializers(many=True, read_only=True)
+    total_money_bill = serializers.SerializerMethodField()
     
     class Meta:
         model = Bill
-        fields = ("id", "date_input", "is_payment", "supplier", "materials", "supplier_id", "bill_details")
+        fields = ("id", "date_input", "is_payment", "total_money_bill", "supplier", "materials", "supplier_id", "bill_details")
+    
+    @classmethod
+    def get_total_money_bill(cls, obj):
+        return obj.total_money_bill
     
     @transaction.atomic
     def create(self, validated_data):

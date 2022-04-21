@@ -1,6 +1,6 @@
 from turtle import position
 from rest_framework import serializers
-from apps.staff.models import Staff, Position, ScheduleStaff, Schedule
+from apps.staff.models import Staff, Position, ScheduleStaff, Schedule, IncomeHistory
 from apps.staff.enums import SessionName
 from apps.staff.exceptions import ScheduleStaffExistException, SessionDoesNotExistException
 import calendar
@@ -88,3 +88,11 @@ class ScheduleStaffSerializer(serializers.ModelSerializer):
         schedule_staff = super(ScheduleStaffSerializer, self).create(validated_data)
         return schedule_staff
         
+        
+class IncomeHistorySerializer(serializers.ModelSerializer):
+    is_payment = serializers.BooleanField(required=True)
+    note = serializers.CharField(required=False)
+    
+    class Meta:
+        model = IncomeHistory
+        fields = "__all__"

@@ -116,8 +116,8 @@ LOCAL_APPS = (
     "apps.uploads.apps.UploadsConfig",
     "apps.otp_auth.apps.OtpConfig",
     "apps.staff.apps.StaffConfig",
-    "apps.notification.apps.NotificationConfig"
-    
+    "apps.notification.apps.NotificationConfig",
+    "apps.equipments.apps.EquipmentsConfig",
 )
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS

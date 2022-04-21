@@ -71,4 +71,4 @@ class IncomeHistory(TimeStampedModel, SoftDeletableModel):
     note = models.TextField(blank=True, null=True)
     
     def __str__(self):
-        return self.date_payment
+        return str(self.date_payment)

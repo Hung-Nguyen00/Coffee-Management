@@ -1,12 +1,15 @@
-from apps.equipments.models import Equipment, Material, Supplier, Bill
+from apps.equipments.models import Equipment, Material, Supplier, Bill, BillDetail
 from rest_framework import viewsets, filters, generics
+from rest_framework.response import Response
 from apps.equipments.api.serializers import (
     EquipmentSerializer,
     MaterialSerializer,
     BillSerializer,
+    BillUpdateSerializer,
     SupplierSerializer)
 import django_filters.rest_framework as django_filters
 from apps.equipments.enums import EquipmentStatus, MaterialStatus
+from apps.equipments.exceptions import BillDetailDoesNotExistsException
 from django.db import models
 from drf_yasg.utils import swagger_auto_schema
 
@@ -86,4 +89,23 @@ class CreateListBillView(generics.ListCreateAPIView):
     queryset = Bill.objects.all()
     filter_backends = [filters.SearchFilter, django_filters.DjangoFilterBackend]
     
+
+class RetrieveUpdateDestroyBillView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = BillUpdateSerializer
+    queryset = Bill.objects.all()
     
+    
+    def patch(self, request, *args, **kwargs):
+        try:
+            return self.partial_update(request, *args, **kwargs)
+        except Exception as e:
+            return Response({"message": f"{e}", "explanation": "Assignment not found"}, status=400)
+        
+    def delete(self, request, *args, **kwargs):
+        try:
+            if self.get_object().is_payment == False:
+                return self.destroy(request, *args, **kwargs)
+            else:
+                return Response({"message": f"Can't not delete a bill that is paid"}, status=400)
+        except Exception as e:
+            return Response({"message": f"{e}", "explanation": "Assignment not found"}, status=400)

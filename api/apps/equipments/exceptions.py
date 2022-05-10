@@ -19,3 +19,13 @@ class MaterialDoesNotExistsException(GenericException):
         if not message:
             message = "The materials does not exist."
         super().__init__(message=message)
+        
+
+class BillDetailDoesNotExistsException(GenericException):
+    code = 2002
+    verbose = True
+
+    def __init__(self, message=None):
+        if not message:
+            message = "This item does not exist in the bill."
+        super().__init__(message=message)

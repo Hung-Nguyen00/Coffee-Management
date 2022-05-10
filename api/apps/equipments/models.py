@@ -75,10 +75,12 @@ class Bill(TimeStampedModel, SoftDeletableModel):
         
 class BillDetail(TimeStampedModel, SoftDeletableModel):
     bill      = models.ForeignKey(Bill, blank=True, null=True, on_delete=models.CASCADE, related_name="bill_details")
-    materials = models.ForeignKey(Material, blank=True, null=True, on_delete=models.CASCADE)
+    material = models.ForeignKey(Material, blank=True, null=True, on_delete=models.CASCADE)
     amount    =  models.FloatField(default=0.0, null=True, blank=True)
     buying_price = models.DecimalField(default=0, null=True, decimal_places=0, max_digits=11)
     
     @property
     def total_money(self):
         return self.amount * float(self.buying_price)
+
+# if material exist and material.amount - self.amount -> material.amount + self.amount (updated)    

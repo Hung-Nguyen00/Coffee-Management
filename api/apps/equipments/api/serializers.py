@@ -2,7 +2,8 @@ from django.db import transaction
 from rest_framework import serializers
 from apps.equipments.models import Equipment, Material, Supplier, Bill, BillDetail
 from apps.equipments.exceptions import MaterialNotEmptyException, MaterialDoesNotExistsException
-from apps.equipments.services.equipments_handle import update_materials
+from apps.equipments.services.equipments_handle import update_materials, update_bill_detail_of_a_bill
+from apps.equipments.services.materials import MaterialService
 
 
 class EquipmentSerializer(serializers.ModelSerializer):
@@ -46,11 +47,11 @@ class BillDetailSerializer(serializers.Serializer):
   
 
 class ListBillDetailSerializers(serializers.ModelSerializer):
-    materials = MaterialSerializer()
-    
+    material = MaterialSerializer(read_only=True)
+
     class Meta:
         model = BillDetail
-        fields = ("id", "materials", "amount", "buying_price", "total_money")
+        fields = ("id", "material", "material_id", "amount", "buying_price", "total_money")
             
         
 class BillSerializer(serializers.ModelSerializer):
@@ -58,7 +59,7 @@ class BillSerializer(serializers.ModelSerializer):
     date_input   = serializers.DateTimeField(required=True)
     is_payment   = serializers.BooleanField(required=True)
     supplier_id  = serializers.PrimaryKeyRelatedField(
-        required=True, source="supplier", queryset=Supplier.objects.all().values_list("id", flat=True), write_only=True)
+        required=True, queryset=Supplier.objects.all().values_list("id", flat=True), write_only=True)
     supplier     = SupplierSerializer(read_only=True)
     bill_details   = ListBillDetailSerializers(many=True, read_only=True)
     total_money_bill = serializers.SerializerMethodField()
@@ -80,13 +81,31 @@ class BillSerializer(serializers.ModelSerializer):
         material_ids = []
         for m in materials:
             material_ids.append(m["material_id"])
-            bill_detail.append(BillDetail(bill=bill, materials_id=m["material_id"], amount=m["amount"], buying_price=m["buying_price"]))
+            bill_detail.append(BillDetail(bill=bill, material_id=m["material_id"], amount=m["amount"], buying_price=m["buying_price"]))
         BillDetail.objects.bulk_create(bill_detail)
-        update_materials(material_ids, materials)
+        MaterialService.update_material_when_create_bill(material_ids, materials)
         return bill
     
- #1. Create Bill ok
- #2. List Materials (amount, buying_price) use bulk_create ok 
- #3. Update amount in materials 
     
+class BillUpdateSerializer(BillSerializer):
+    bill_update_details = BillDetailSerializer(many=True, write_only=True)
+
+    class Meta:
+        model = Bill
+        fields = ("id", "date_input", "is_payment", "total_money_bill", "supplier", "supplier_id", "bill_details", "bill_update_details")
+    
+    @classmethod
+    def get_total_money_bill(cls, obj):
+        return obj.total_money_bill
+    
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        bill_details_data = validated_data.pop("bill_update_details")
         
+        #remove all when don't have any billdetail item
+        if len(bill_details_data) == 0:
+            BillDetail.objects.filter(bill=instance).delete()
+            return super().update(instance, validated_data)
+        instance = MaterialService.update_material_when_remove_or_update_bill_detail(bill_details_data, instance)
+            
+        return super().update(instance, validated_data)

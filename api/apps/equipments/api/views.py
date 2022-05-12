@@ -1,4 +1,4 @@
-from apps.equipments.models import Equipment, Material, Supplier, Bill, BillDetail
+from apps.equipments.models import Equipment, Material, Supplier, Bill
 from rest_framework import viewsets, filters, generics
 from rest_framework.response import Response
 from apps.equipments.api.serializers import (
@@ -9,7 +9,6 @@ from apps.equipments.api.serializers import (
     SupplierSerializer)
 import django_filters.rest_framework as django_filters
 from apps.equipments.enums import EquipmentStatus, MaterialStatus
-from apps.equipments.exceptions import BillDetailDoesNotExistsException
 from django.db import models
 from drf_yasg.utils import swagger_auto_schema
 

@@ -1,8 +1,7 @@
 from django.db import transaction
 from rest_framework import serializers
 from apps.equipments.models import Equipment, Material, Supplier, Bill, BillDetail
-from apps.equipments.exceptions import MaterialNotEmptyException, MaterialDoesNotExistsException
-from apps.equipments.services.equipments_handle import update_materials, update_bill_detail_of_a_bill
+from apps.equipments.exceptions import MaterialDoesNotExistsException
 from apps.equipments.services.materials import MaterialService
 
 

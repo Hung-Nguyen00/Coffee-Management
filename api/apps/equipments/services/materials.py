@@ -1,4 +1,3 @@
-from threading import main_thread
 from apps.equipments.models import Material, Bill, BillDetail
 from typing import Dict, List
 
@@ -37,7 +36,7 @@ class MaterialService:
         for d in update_bill_details:
             material_exist       = materials_mapping.get(d.id)
             old_bill_detail_item = old_bill_detail.get(d.id)
-            amount               = (material_exist - old_bill_detail_item["amount"]) + d.amount
+            amount               = (material_exist.amount - old_bill_detail_item["amount"]) + d.amount
             list_updates.append(Material(id=d.id, amount=amount))
         
         #minus amount when meterials in a bill was removed

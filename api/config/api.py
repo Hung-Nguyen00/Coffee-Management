@@ -8,4 +8,5 @@ urlpatterns = [
     path("otp/", include("apps.otp_auth.api.urls")),
     path("", include("apps.staff.api.urls")),
     path("", include("apps.equipments.api.urls")),
+    path("", include("apps.orders.api.urls")),
 ]

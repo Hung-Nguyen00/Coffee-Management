@@ -118,6 +118,7 @@ LOCAL_APPS = (
     "apps.staff.apps.StaffConfig",
     "apps.notification.apps.NotificationConfig",
     "apps.equipments.apps.EquipmentsConfig",
+    "apps.orders.apps.OrdersConfig",
 )
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS

@@ -3,6 +3,10 @@ from django.contrib.postgres.fields import ArrayField
 from apps.staff.enums import SessionName
 from model_utils.models import TimeStampedModel, SoftDeletableModel
 from apps.staff.contains import TOTAL_HOURS_OF_MORNING, TOTAL_HOURS_OF_AFTERNOON, TOTAL_HOURS_OF_EVENING
+from apps.staff.enums import CsvLogType, CsvLogStatus
+from apps.core.utils import get_media_url
+from apps.users.models import User
+
 
 # Create your models here.
 class Position(TimeStampedModel, SoftDeletableModel):
@@ -72,3 +76,22 @@ class IncomeHistory(TimeStampedModel, SoftDeletableModel):
     
     def __str__(self):
         return str(self.date_payment)
+    
+
+class CsvLog(TimeStampedModel):
+    type = models.CharField(choices=CsvLogType.choices(), max_length=100)
+    file_path = models.CharField(max_length=240, null=False)
+    file_size = models.FloatField(null=True)
+    total_records = models.IntegerField(null=True)
+    success = models.IntegerField(null=True)
+    fails = models.IntegerField(null=True)
+    errors = models.JSONField(blank=True, null=True)
+    status = models.CharField(max_length=100, choices=CsvLogStatus.choices())
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.file_path.split("/")[-1]
+
+    @property
+    def download_url(self):
+        return get_media_url(file_path=self.file_path)

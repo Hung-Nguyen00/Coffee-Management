@@ -111,14 +111,11 @@ THIRD_PARTY_APPS = (
 LOCAL_APPS = (
     "apps.core.apps.CoreConfig",
     "apps.users.apps.UserConfig",
-     "apps.social_auth.apps.SocialAuthConfig",
+    "apps.social_auth.apps.SocialAuthConfig",
     "apps.users_auth.apps.UsersAuthConfig",
     "apps.uploads.apps.UploadsConfig",
     "apps.otp_auth.apps.OtpConfig",
-    "apps.staff.apps.StaffConfig",
     "apps.notification.apps.NotificationConfig",
-    "apps.equipments.apps.EquipmentsConfig",
-    "apps.orders.apps.OrdersConfig",
 )
 
 INSTALLED_APPS = DJANGO_APPS + LOCAL_APPS + THIRD_PARTY_APPS
